@@ -32,6 +32,56 @@
         "./scripts/win-updates.ps1"
       ]
     },
+    
+    
+    
+    {
+      "vm_name":"windows_10",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+          
+      "type": "qemu",
+      "format":"qcow2",
+      "accelerator": "kvm",
+
+      "disk_size": "{{ user `disk_size`}}",
+      "disk_interface":"virtio",
+      "net_device": "virtio-net",
+          
+      "boot_wait": "6m",
+      "communicator":"winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout" : "4h",
+
+      "qemuargs": [
+          [ "-m", "4048M" ],
+          [ "-cpu", "Westmere" ]
+      ],
+          
+          
+          
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "disk_size": "{{user `disk_size`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./floppy/WindowsPowershell.lnk",
+        "./floppy/PinTo10.exe",
+        "./scripts/fixnetwork.ps1",
+        "./scripts/MakeWindows10GreatAgain.ps1",
+        "./scripts/MakeWindows10GreatAgain.reg",
+        "./scripts/rearm-windows.ps1",
+        "./scripts/disable-screensaver.ps1",
+        "./scripts/disable-winrm.ps1",
+        "./scripts/enable-winrm.ps1",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1"
+      ]
+    },
+    
+    
+    
     {
       "type": "vmware-iso",
       "vm_name":"windows_10",
