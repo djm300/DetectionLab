@@ -45,6 +45,8 @@
       "format":"qcow2",
       "accelerator": "kvm",
 
+      "headless": "false",
+
       "disk_size": "{{ user `disk_size`}}",
       "disk_interface":"virtio",
       "net_device": "virtio-net",
