@@ -1,13 +1,29 @@
 Vagrant.configure("2") do |config|
 
   config.vm.define "logger" do |cfg|
-    cfg.vm.box = "bento/ubuntu-16.04"
+    cfg.vm.box = "generic/ubuntu1604"
     cfg.vm.hostname = "logger"
     config.vm.provision :shell, path: "bootstrap.sh"
-    cfg.vm.network :private_network, ip: "192.168.38.5", gateway: "192.168.38.1", dns: "8.8.8.8"
+    
+      # Private network using virtual network switching
+
+  
+    cfg.vm.network :private_network, 
+        :ip =>  "192.168.38.5", 
+        :gateway =>  "192.168.38.1", 
+        :dns =>  "8.8.8.8",
+        :libvirt__domain_name =>  "detectionlab"
+    
     config.vm.network :forwarded_port, guest: 8000, host: 8000
     config.vm.network :forwarded_port, guest: 8412, host: 8412
 
+    cfg.vm.provider "libvirt" do |v, override|
+      v.memory = 2048
+      v.cpus = 1
+      v.storage_pool_nam = "vm"
+    end
+    
+    
     cfg.vm.provider "vmware_fusion" do |v, override|
       v.memory = 2048
       v.cpus = 1
@@ -25,7 +41,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "dc" do |cfg|
-    cfg.vm.box = "../Boxes/windows_2016_virtualbox.box"
+    cfg.vm.box = "windows2016"
     cfg.vm.hostname = "dc"
 
     # use the plaintext WinRM transport and force it to use basic authentication.
@@ -60,7 +76,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", inline: "Set-SmbServerConfiguration -AuditSmb1Access $true -Force", privileged: true
 
     cfg.vm.provider "vmware_fusion" do |v, override|
-      override.vm.box = "../Boxes/windows_2016_vmware.box"
+      override.vm.box = "windows-2016"
       v.memory = 2048
       v.cpus = 1
       v.gui = true
@@ -74,10 +90,16 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
       vb.customize ["setextradata", "global", "GUI/SuppressMessages", "all" ]
     end
+    
+    cfg.vm.provider "libvirt" do |v, override|
+      v.memory = 2048
+      v.cpus = 1
+      v.storage_pool_nam = "vm"
+    end
   end
 
   config.vm.define "wef" do |cfg|
-    cfg.vm.box = "../Boxes/windows_2016_virtualbox.box"
+    cfg.vm.box = "windows2016"
     cfg.vm.hostname = "wef"
 
     cfg.vm.communicator = "winrm"
@@ -103,6 +125,15 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", path: "scripts/install-autorunstowineventlog.ps1", privileged: true
     cfg.vm.provision "shell", inline: "Set-SmbServerConfiguration -AuditSmb1Access $true -Force", privileged: true
 
+    
+    
+    cfg.vm.provider "libvirt" do |v, override|
+      v.memory = 2048
+      v.cpus = 1
+      v.storage_pool_nam = "vm"
+    end
+    
+    
     cfg.vm.provider "vmware_fusion" do |v, override|
       override.vm.box = "../Boxes/windows_2016_vmware.box"
       v.memory = 2048
@@ -121,7 +152,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "win10" do |cfg|
-    cfg.vm.box = "../Boxes/windows_10_virtualbox.box"
+    cfg.vm.box = "windows10"
     cfg.vm.hostname = "win10"
 
     cfg.vm.communicator = "winrm"
@@ -160,6 +191,12 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--vram", "32"]
       vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
       vb.customize ["setextradata", "global", "GUI/SuppressMessages", "all" ]
+    end
+    
+    cfg.vm.provider "libvirt" do |v, override|
+      v.memory = 2048
+      v.cpus = 1
+      v.storage_pool_nam = "vm"
     end
   end
 end
