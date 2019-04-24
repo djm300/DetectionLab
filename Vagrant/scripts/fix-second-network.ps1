@@ -1,7 +1,7 @@
 # Source: https://github.com/StefanScherer/adfs2
 param ([String] $ip, [String] $dns)
 
-if (! (Test-Path 'C:\Program Files\VMware\VMware Tools')) {
+if (! ( (Test-Path 'C:\Program Files\VMware\VMware Tools') -or (Get-NetAdapter | Select-Object -First 1 | Select-Object -ExpandProperty InterfaceDescription).Contains('Red Hat VirtIO'))) {
   Write-Host "Nothing to do for other providers than VMware."
   exit 0
 }
